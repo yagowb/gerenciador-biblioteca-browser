@@ -1,0 +1,15 @@
+{
+  "name": "gerenciador-biblioteca",
+  "version": "1.0.0",
+  "description": "Este projeto é uma aplicação web que permite o gerenciamento de uma biblioteca online. \r Com ele, é possível inserir, buscar e remover livros de forma simples e eficiente. A aplicação utiliza a estrutura de dados Árvore B+ para otimizar as operações de busca e organização dos livros.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql": "^2.18.1"
+  }
+}

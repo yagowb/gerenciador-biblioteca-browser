@@ -1,5 +1,7 @@
+import { adicionarLivro, buscarLivro, removerLivro } from "./backend.js";
 import { BibliotecaManager } from "./BibliotecaManager.js";
 import { Livro } from "./Livro.js";
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnRemover = document.getElementById('btn-remover');
   const alertModal = document.getElementById('alert-modal');
 
-  formInserirLivro.addEventListener('submit', (event) => {
+  formInserirLivro.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const titulo = inputTitulo.value.trim();
@@ -25,48 +27,70 @@ document.addEventListener('DOMContentLoaded', () => {
     if (titulo !== '' && autor !== '' && !isNaN(ano)) {
       const livro = new Livro(titulo, autor, ano);
 
-      if (biblioteca.buscarLivro(titulo) !== null) {
-        showAlertModal('Livro já inserido');
-      } else {
-        biblioteca.inserirLivro(livro);
-        inputTitulo.value = '';
-        inputAutor.value = '';
-        inputAno.value = '';
-        textareaResultado.value = 'Livro inserido com sucesso!';
-        showAlertModal('Livro inserido com sucesso!');
+      try {
+        const response = await adicionarLivro(titulo, autor, ano);
+
+        if (response) {
+          biblioteca.inserirLivro(livro);
+          inputTitulo.value = '';
+          inputAutor.value = '';
+          inputAno.value = '';
+          textareaResultado.value = 'Livro inserido com sucesso!';
+          showAlertModal('Livro inserido com sucesso!');
+        } else {
+          showAlertModal('Erro ao inserir livro.');
+        }
+      } catch (error) {
+        console.error(error);
+        showAlertModal('Erro ao inserir livro.');
       }
     } else {
       showAlertModal('Preencha todos os campos corretamente');
     }
   });
 
-  btnBuscar.addEventListener('click', () => {
+
+
+  btnBuscar.addEventListener('click', async () => {
     const titulo = inputBuscar.value.trim();
 
     if (titulo !== '') {
-      const livro = biblioteca.buscarLivro(titulo);
+      try {
+        const livro = await buscarLivro(titulo);
 
-      if (livro !== null) {
-        textareaResultado.value = livro.toString();
-      } else {
-        textareaResultado.value = 'Livro não encontrado.';
+        if (livro) {
+          textareaResultado.value = livro.toString();
+        } else {
+          textareaResultado.value = 'Livro não encontrado.';
+        }
+      } catch (error) {
+        console.error(error);
+        showAlertModal('Erro ao buscar livro.');
       }
     } else {
       showAlertModal('Digite o título do livro para realizar a busca.');
     }
   });
 
-  btnRemover.addEventListener('click', () => {
+  
+
+  btnRemover.addEventListener('click', async () => {
     const titulo = inputBuscar.value.trim();
 
     if (titulo !== '') {
-      const livroRemovido = biblioteca.removerLivro(titulo);
+      try {
+        const livroRemovido = await removerLivro(titulo);
 
-      if (livroRemovido !== null) {
-        textareaResultado.value = 'Livro removido com sucesso.';
-        showAlertModal('Livro removido com sucesso.');
-      } else {
-        showAlertModal('Livro não está catalogado.');
+        if (livroRemovido) {
+          biblioteca.removerLivro(titulo);
+          textareaResultado.value = 'Livro removido com sucesso.';
+          showAlertModal('Livro removido com sucesso.');
+        } else {
+          showAlertModal('Livro não está catalogado.');
+        }
+      } catch (error) {
+        console.error(error);
+        showAlertModal('Erro ao remover livro.');
       }
     } else {
       showAlertModal('Digite o título do livro para realizar a remoção.');
@@ -74,6 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     inputBuscar.value = '';
   });
+
+
 
   // Função para exibir o pop-up modal com a mensagem de erro
   function showAlertModal(message) {

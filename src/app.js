@@ -14,7 +14,6 @@ const uri = 'mongodb+srv://yagodev:m5BGDYPisj4H1Mw4@cluster0.1wafvok.mongodb.net
 
 async function run() {
   const client = new MongoClient(uri, {
-
   });
 
   try {

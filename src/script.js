@@ -2,10 +2,22 @@ import { BibliotecaManager } from "./BibliotecaManager.js";
 import { Livro } from "./Livro.js";
 
 
+document.addEventListener('DOMContentLoaded', () => {
+  const biblioteca = new BibliotecaManager();
 
-//backend.js
-// Função para adicionar um livro no backend
- async function adicionarLivro(titulo, autor, ano) {
+  const formInserirLivro = document.getElementById('form-inserir-livro');
+  const inputTitulo = document.getElementById('input-titulo');
+  const inputAutor = document.getElementById('input-autor');
+  const inputAno = document.getElementById('input-ano');
+  const textareaResultado = document.getElementById('textarea-resultado');
+  const inputBuscar = document.getElementById('input-buscar');
+  const btnBuscar = document.getElementById('btn-buscar');
+  const btnRemover = document.getElementById('btn-remover');
+  const alertModal = document.getElementById('alert-modal');
+
+
+// Função para inserir um livro no backend
+async function adicionarLivro(titulo, autor, ano) {
   try {
     const response = await fetch('http://localhost:3001/livros', {
       method: 'POST',
@@ -26,60 +38,6 @@ import { Livro } from "./Livro.js";
   }
 }
 
-
-
-// Função para buscar um livro no backend
- async function buscarLivro(titulo) {
-  try {
-    const response = await fetch(`http://localhost:3001/livros/${titulo}`);
-
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    } else {
-      throw new Error('Erro ao buscar livro');
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-
-// Função para remover um livro do backend
- async function removerLivro(titulo) {
-  try {
-    const response = await fetch(`http://localhost:3001/livros/${titulo}`, {
-      method: 'DELETE'
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    } else {
-      throw new Error('Erro ao remover livro');
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-
-//
-
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  const biblioteca = new BibliotecaManager();
-
-  const formInserirLivro = document.getElementById('form-inserir-livro');
-  const inputTitulo = document.getElementById('input-titulo');
-  const inputAutor = document.getElementById('input-autor');
-  const inputAno = document.getElementById('input-ano');
-  const textareaResultado = document.getElementById('textarea-resultado');
-  const inputBuscar = document.getElementById('input-buscar');
-  const btnBuscar = document.getElementById('btn-buscar');
-  const btnRemover = document.getElementById('btn-remover');
-  const alertModal = document.getElementById('alert-modal');
 
   formInserirLivro.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -114,6 +72,24 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
+//---------------------------------//
+
+
+// Função para buscar um livro no backend
+async function buscarLivro(titulo) {
+  try {
+    const response = await fetch(`http://localhost:3001/livros/${titulo}`);
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      throw new Error('Erro ao buscar livro');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
 
   btnBuscar.addEventListener('click', async () => {
     const titulo = inputBuscar.value.trim();
@@ -136,7 +112,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  
+
+//---------------------------------//
+
+
+  // Função para remover um livro do backend
+ async function removerLivro(titulo) {
+  try {
+    const response = await fetch(`http://localhost:3001/livros/${titulo}`, {
+      method: 'DELETE'
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      throw new Error('Erro ao remover livro');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 
   btnRemover.addEventListener('click', async () => {
     const titulo = inputBuscar.value.trim();
@@ -163,7 +160,9 @@ document.addEventListener('DOMContentLoaded', () => {
     inputBuscar.value = '';
   });
 
+  
 
+//---------------------------------//
 
   // Função para exibir o pop-up modal com a mensagem de erro
   function showAlertModal(message) {

@@ -99,7 +99,7 @@ async function buscarLivro(titulo) {
         const livro = await buscarLivro(titulo);
 
         if (livro) {
-          textareaResultado.value = livro.toString();
+          textareaResultado.value = `Título: ${livro.titulo}\nAutor: ${livro.autor}\nAno: ${livro.ano}`;
         } else {
           textareaResultado.value = 'Livro não encontrado.';
         }

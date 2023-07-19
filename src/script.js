@@ -1,7 +1,6 @@
 import { BibliotecaManager } from "./BibliotecaManager.js";
 import { Livro } from "./Livro.js";
 
-
 document.addEventListener('DOMContentLoaded', () => {
   const biblioteca = new BibliotecaManager();
 
@@ -15,29 +14,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnRemover = document.getElementById('btn-remover');
   const alertModal = document.getElementById('alert-modal');
 
+  // Função para inserir um livro no backend
+  async function adicionarLivro(titulo, autor, ano) {
+    try {
+      const response = await fetch('http://localhost:3001/livros', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ titulo, autor, ano })
+      });
 
-// Função para inserir um livro no backend
-async function adicionarLivro(titulo, autor, ano) {
-  try {
-    const response = await fetch('http://localhost:3001/livros', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ titulo, autor, ano })
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    } else {
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      } else {
+        throw new Error('Erro ao adicionar livro');
+      }
+    } catch (error) {
+      console.error(error);
       throw new Error('Erro ao adicionar livro');
     }
-  } catch (error) {
-    console.error(error);
   }
-}
-
 
   formInserirLivro.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -71,25 +69,34 @@ async function adicionarLivro(titulo, autor, ano) {
     }
   });
 
+  // Função para buscar um livro no backend
+  async function buscarLivro(titulo) {
+    try {
+      const response = await fetch(`http://localhost:3001/livros/${titulo}`);
 
-//---------------------------------//
+      if (!response.ok) {
+        throw new Error(`Erro ao buscar livro (${response.status} ${response.statusText})`);
+      }
 
-
-// Função para buscar um livro no backend
-async function buscarLivro(titulo) {
-  try {
-    const response = await fetch(`http://localhost:3001/livros/${titulo}`);
-
-    if (response.ok) {
       const data = await response.json();
-      return data;
-    } else {
-      throw new Error('Erro ao buscar livro');
+      console.log('Dados da resposta:', data);
+
+      if (data && Array.isArray(data) && data.length > 0) {
+        const livro = data[0];
+        const livroFormatado = {
+          titulo: livro.titulo || 'Sem título',
+          autor: livro.autor || 'Autor desconhecido',
+          ano: livro.ano || 'Ano desconhecido'
+        };
+        return livroFormatado;
+      } else {
+        throw new Error('Livro não encontrado.');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar livro:', error);
+      throw new Error('Erro ao buscar livro.');
     }
-  } catch (error) {
-    console.error(error);
   }
-}
 
   btnBuscar.addEventListener('click', async () => {
     const titulo = inputBuscar.value.trim();
@@ -98,13 +105,13 @@ async function buscarLivro(titulo) {
       try {
         const livro = await buscarLivro(titulo);
 
-        if (livro) {
-          textareaResultado.value = `Título: ${livro.titulo}\nAutor: ${livro.autor}\nAno: ${livro.ano}`;
-        } else {
+        if (!livro || Object.keys(livro).length === 0) {
           textareaResultado.value = 'Livro não encontrado.';
+        } else {
+          textareaResultado.value = `Título: ${livro.titulo}\nAutor: ${livro.autor}\nAno: ${livro.ano}`;
         }
       } catch (error) {
-        console.error(error);
+        console.error('Erro ao buscar livro:', error);
         showAlertModal('Erro ao buscar livro.');
       }
     } else {
@@ -112,28 +119,26 @@ async function buscarLivro(titulo) {
     }
   });
 
-
-//---------------------------------//
-
-
   // Função para remover um livro do backend
- async function removerLivro(titulo) {
-  try {
-    const response = await fetch(`http://localhost:3001/livros/${titulo}`, {
-      method: 'DELETE'
-    });
+  async function removerLivro(titulo) {
+    try {
+      const response = await fetch(`http://localhost:3001/livros/${titulo}`, {
+        method: 'DELETE'
+      });
 
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    } else {
-      throw new Error('Erro ao remover livro');
+      if (response.status === 200) {
+        const data = await response.json();
+        return data;
+      } else if (response.status === 404) {
+        return false; // Retorna false quando o livro não é encontrado
+      } else {
+        throw new Error('Erro ao remover livro');
+      }
+    } catch (error) {
+      console.error(error);
+      throw new Error('Erro ao remover livro.');
     }
-  } catch (error) {
-    console.error(error);
   }
-}
-
 
   btnRemover.addEventListener('click', async () => {
     const titulo = inputBuscar.value.trim();
@@ -142,12 +147,15 @@ async function buscarLivro(titulo) {
       try {
         const livroRemovido = await removerLivro(titulo);
 
-        if (livroRemovido) {
-          biblioteca.removerLivro(titulo);
-          textareaResultado.value = 'Livro removido com sucesso.';
-          showAlertModal('Livro removido com sucesso.');
+        if (livroRemovido !== false) {
+          if (livroRemovido) {
+            biblioteca.removerLivro(titulo);
+            textareaResultado.value = `Livro ${titulo} removido com sucesso.`;
+            showAlertModal(`Livro ${titulo} removido com sucesso.`);
+          }
         } else {
-          showAlertModal('Livro não está catalogado.');
+          textareaResultado.value = 'Livro não encontrado.'; // Exibe a mensagem na textarea
+          showAlertModal('Livro não encontrado.');
         }
       } catch (error) {
         console.error(error);
@@ -159,10 +167,6 @@ async function buscarLivro(titulo) {
 
     inputBuscar.value = '';
   });
-
-  
-
-//---------------------------------//
 
   // Função para exibir o pop-up modal com a mensagem de erro
   function showAlertModal(message) {

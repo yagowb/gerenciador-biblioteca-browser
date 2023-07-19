@@ -3,8 +3,9 @@ import { Livro } from './Livro.js';
 export class ArvoreBPlus {
   constructor(ordem) {
     this.ordem = ordem;
-    this.raiz = new NoFolha();
+    this.raiz = new NoFolha(ordem);
   }
+  
 
   inserir(livro) {
     if (livro !== null) {
@@ -46,11 +47,14 @@ class No {
 }
 
 class NoFolha extends No {
-  constructor() {
+  constructor(ordem) {
     super();
     this.livros = [];
+    this.chaves = [];
     this.proximo = null;
+    this.ordem = ordem;
   }
+  
 
   inserir(livro) {
     let index = 0;
@@ -90,9 +94,10 @@ class NoFolha extends No {
 
   buscar(titulo) {
     for (let i = 0; i < this.chaves.length; i++) {
-      if (this.chaves[i].toLowerCase().includes(titulo.toLowerCase())) {
+      if (this.livros[i].getTitulo().toLowerCase().includes(titulo.toLowerCase())) {
         return this.livros[i];
       }
+      
     }
     return null;
   }

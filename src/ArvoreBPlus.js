@@ -5,7 +5,6 @@ export class ArvoreBPlus {
     this.ordem = ordem;
     this.raiz = new NoFolha(ordem);
   }
-  
 
   inserir(livro) {
     if (livro !== null) {
@@ -19,7 +18,7 @@ export class ArvoreBPlus {
     }
     return null;
   }
-  
+
   buscar(titulo) {
     if (titulo !== '') {
       return this.raiz.buscar(titulo);
@@ -54,7 +53,6 @@ class NoFolha extends No {
     this.proximo = null;
     this.ordem = ordem;
   }
-  
 
   inserir(livro) {
     let index = 0;
@@ -74,7 +72,7 @@ class NoFolha extends No {
     const livrosDireita = this.livros.splice(meio);
     const chavesDireita = this.chaves.splice(meio);
 
-    const novaFolha = new NoFolha();
+    const novaFolha = new NoFolha(this.ordem);
     novaFolha.livros = livrosDireita;
     novaFolha.chaves = chavesDireita;
     novaFolha.proximo = this.proximo;
@@ -93,13 +91,15 @@ class NoFolha extends No {
   }
 
   buscar(titulo) {
+    const resultados = [];
+
     for (let i = 0; i < this.chaves.length; i++) {
       if (this.livros[i].getTitulo().toLowerCase().includes(titulo.toLowerCase())) {
-        return this.livros[i];
+        resultados.push(this.livros[i]);
       }
-      
     }
-    return null;
+
+    return resultados.length > 0 ? resultados : null;
   }
 }
 

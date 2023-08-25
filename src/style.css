@@ -1,0 +1,81 @@
+/* Estilo para o corpo da página */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Estilo para o cabeçalho */
+  h1 {
+    color: #333;
+  }
+  
+  /* Estilo para os títulos dos formulários */
+  h3 {
+    color: #555;
+  }
+  
+  /* Estilo para os botões */
+  .btn {
+    font-weight: bold;
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+  
+  /* Estilo para os campos de entrada de texto */
+  .form-control {
+    border-radius: 0.25rem;
+  }
+  
+  /* Estilo para a caixa de resultados */
+  #textarea-resultado {
+    resize: vertical;
+  }
+  
+  /* Estilo para o modal */
+  .modal-body {
+    color: #555;
+  }
+  
+  /* Estilo para o rodapé do modal */
+  .modal-footer {
+    background-color: #f8f9fa;
+  }
+  
+  /* Ajuste para o tamanho do modal */
+  .modal-dialog {
+    max-width: 400px;
+  }
+  
+  /* Estilo para espaçamento vertical nas seções */
+  .mb-4 {
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Estilo para centralizar elementos horizontalmente */
+  .mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  /* Estilo para centralizar elementos verticalmente */
+  .my-auto {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+  
+  /* Estilo para espaçamento vertical nas seções */
+  .my-5 {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
+  

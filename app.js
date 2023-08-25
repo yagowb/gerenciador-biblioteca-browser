@@ -78,7 +78,6 @@ app.get('/livros/:titulo', async (req, res) => {
 app.delete('/livros/:titulo', async (req, res) => {
   const titulo = req.params.titulo;
 
-
   try {
     const livroRemovido = await db.delete(titulo);
 

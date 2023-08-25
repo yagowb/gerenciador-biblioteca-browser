@@ -19,37 +19,31 @@ export class BibliotecaManager {
 
   async removerLivro(titulo) {
     try {
-      const livro = await this.buscarLivro(titulo);
-        
-      if (livro !== null) {
-        const chaveUrlEncoded = encodeURIComponent(livro.key);
-        const response = await fetch(`http://localhost:3001/livros/${chaveUrlEncoded}`, {
-          method: 'DELETE'
-        });
-  
-        if (!response.ok) {
-          throw new Error(`Erro ao remover livro (${response.status} ${response.statusText})`);
-        }
-        
-        const livroRemovidoArvore = this.arvore.remover(livro.key);
-  
+      const response = await fetch(`http://localhost:3001/livros/${titulo}`, {
+        method: 'DELETE'
+      });
+
+      if (response.status === 200) {
+        const livroRemovidoArvore = this.arvore.remover(titulo);
+
         if (livroRemovidoArvore !== null) {
           console.log(`Livro ${titulo} foi removido com sucesso da árvore.`);
           return livroRemovidoArvore;
         } else {
-          console.log(`Livro ${titulo} foi encontrado no backend, mas não na árvore.`);
+          console.log(`Livro ${titulo} foi removido do backend, mas não encontrado na árvore.`);
           return null;
         }
-      } else {
+      } else if (response.status === 404) {
         console.log(`Livro ${titulo} não encontrado no backend.`);
         return null;
+      } else {
+        throw new Error('Erro ao remover livro');
       }
     } catch (error) {
-      console.error('Erro ao buscar/remover livro:', error);
-      throw new Error('Erro ao buscar/remover livro.');
+      console.error(error);
+      throw new Error('Erro ao remover livro.');
     }
-  }
-  
+  }  
   
 
   buscarLivro(titulo) {
@@ -57,7 +51,7 @@ export class BibliotecaManager {
     if (livroEncontrado !== null) {
       return livroEncontrado;
     } else {
-      return null; 
+      return null; // Retorna null quando o livro não é encontrado
     }
   }
 }

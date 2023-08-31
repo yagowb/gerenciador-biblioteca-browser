@@ -1,8 +1,8 @@
 export class Livro {
-    constructor(titulo, autor, anoPublicacao) {
+    constructor(titulo, autor, ano) {
       this.titulo = titulo;
       this.autor = autor;
-      this.anoPublicacao = anoPublicacao;
+      this.ano = ano;
     }
   
     // Getters e setters
@@ -22,16 +22,16 @@ export class Livro {
       this.autor = autor;
     }
   
-    getAnoPublicacao() {
-      return this.anoPublicacao;
+    getAno() {
+      return this.ano;
     }
   
-    setAnoPublicacao(anoPublicacao) {
-      this.anoPublicacao = anoPublicacao;
+    setAno(ano) {
+      this.ano = ano;
     }
   
     toString() {
-      return `Livro { Título: ${this.titulo}, Autor: ${this.autor}, Ano de Publicação: ${this.anoPublicacao} }`;
+      return `Livro { Título: ${this.titulo}, Autor: ${this.autor}, Ano de Publicação: ${this.ano} }`;
     }
   }
   

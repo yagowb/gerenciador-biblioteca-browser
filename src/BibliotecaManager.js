@@ -1,38 +1,41 @@
-import { ArvoreBPlus } from './ArvoreBPlus.js';
-
-
 export class BibliotecaManager {
-  constructor() {
-    this.arvore = new ArvoreBPlus(10);
+  constructor(baseUrl) {
+    this.baseUrl = baseUrl; 
+  }
+
+  async inserirLivro(livro) {
+    try {
+      const response = await fetch(`${this.baseUrl}/livros`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(livro)
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      } else {
+        const errorMessage = await response.text(); // Captura a mensagem de erro
+        throw new Error(errorMessage);
+      }
+    } catch (error) {
+      console.error(error);
+      throw new Error('Erro ao adicionar livro');
+    }
   }
   
 
-  inserirLivro(livro) {
-    const titulo = livro.getTitulo();
-    if (this.buscarLivro(titulo) !== null) {
-      console.log("Livro já inserido");
-      return;
-    }
-    this.arvore.inserir(livro);
-  }
-
-
   async removerLivro(titulo) {
     try {
-      const response = await fetch(`http://localhost:3001/livros/${titulo}`, {
+      const response = await fetch(`${this.baseUrl}/livros/${titulo}`, {
         method: 'DELETE'
       });
 
       if (response.status === 200) {
-        const livroRemovidoArvore = this.arvore.remover(titulo);
-
-        if (livroRemovidoArvore !== null) {
-          console.log(`Livro ${titulo} foi removido com sucesso da árvore.`);
-          return livroRemovidoArvore;
-        } else {
-          console.log(`Livro ${titulo} foi removido do backend, mas não encontrado na árvore.`);
-          return null;
-        }
+        const data = await response.json();
+        return data;
       } else if (response.status === 404) {
         console.log(`Livro ${titulo} não encontrado no backend.`);
         return null;
@@ -43,15 +46,37 @@ export class BibliotecaManager {
       console.error(error);
       throw new Error('Erro ao remover livro.');
     }
-  }  
-  
+  }
 
-  buscarLivro(titulo) {
-    const livroEncontrado = this.arvore.buscar(titulo);
-    if (livroEncontrado !== null) {
-      return livroEncontrado;
-    } else {
-      return null; // Retorna null quando o livro não é encontrado
+  async buscarLivro(titulo) {
+    try {
+      const response = await fetch(`${this.baseUrl}/livros/${encodeURIComponent(titulo)}`);
+
+      if (response.status === 404) {
+        console.log(`Livro ${titulo} não encontrado no backend.`);
+        return null;
+      }
+
+      if (!response.ok) {
+        throw new Error(`Erro ao buscar livro (${response.status} ${response.statusText})`);
+      }
+
+      const livro = await response.json();
+
+      if (livro) {
+        const livroFormatado = {
+          titulo: livro.titulo || 'Sem título',
+          autor: livro.autor || 'Autor desconhecido',
+          ano: livro.ano || 'Ano desconhecido'
+        };
+        return livroFormatado;
+      } else {
+        console.log(`Livro ${titulo} não encontrado no backend.`);
+        return null;
+      }
+    } catch (error) {
+      console.error('Erro ao buscar livro:', error);
+      throw new Error('Erro ao buscar livro.');
     }
   }
 }

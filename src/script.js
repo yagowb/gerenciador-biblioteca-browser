@@ -78,7 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
           textareaResultado.value = `Livro ${titulo} removido com sucesso.`;
           showAlertModal(`Livro ${titulo} removido com sucesso.`);
 
-          //location.reload();
+          setTimeout(function(){
+            location.reload();
+          }, 2000);
         } else {
           textareaResultado.value = 'Livro não encontrado.';
           showAlertModal('Livro não encontrado.');
